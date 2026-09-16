@@ -2,32 +2,39 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>お支度ボード</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>できたよ！お支度ボード</title>
   <style>
     :root {
-      --board-bg: #f9fbfd;
-      --frame-color: #f1dfbf;
-      --border-line: #4fa3e3;
+      --board-bg: #f8fafc;
+      --frame-color: #f7dfbe;
+      --frame-border: #d4a373;
+      --blue-divider: #38bdf8;
       --card-bg: #ffffff;
-      --card-border: #d0d7de;
-      --text-main: #333333;
-      --accent-orange: #ff9800;
-      --done-color: #ff7043;
+      --card-border: #cbd5e1;
+      --text-main: #1e293b;
+      --sub-text: #64748b;
+      --morning-color: #ea580c;
+      --item-color: #0284c7;
+      --afternoon-color: #16a34a;
+      --stamp-gold: #fbbf24;
+      --stamp-border: #d97706;
+      --danger-color: #ef4444;
     }
 
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
       -webkit-tap-highlight-color: transparent;
     }
 
     body {
       margin: 0;
       padding: 12px;
-      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
-      background: #e5ece9;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Segoe UI", Meiryo, sans-serif;
+      background: #e2e8f0;
       color: var(--text-main);
       display: flex;
       justify-content: center;
@@ -36,62 +43,83 @@
 
     .app-container {
       width: 100%;
-      max-width: 1000px;
+      max-width: 960px;
       background: var(--board-bg);
-      border: 14px solid var(--frame-color);
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15), inset 0 0 15px rgba(0,0,0,0.03);
-      padding: 16px;
+      border: 12px solid var(--frame-color);
+      outline: 2px solid var(--frame-border);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
     .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 2px dashed #b0bec5;
-      padding-bottom: 12px;
-    }
-
-    .board-title {
-      font-size: 1.3rem;
-      font-weight: bold;
-      color: #37474f;
-      display: flex;
-      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 2px dashed #94a3b8;
+      flex-wrap: wrap;
       gap: 8px;
     }
 
-    .reset-btn {
+    .board-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .control-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
       background: #ffffff;
-      border: 2px solid #90a4ae;
-      color: #546e7a;
-      padding: 6px 14px;
+      border: 2px solid #94a3b8;
+      color: #475569;
+      padding: 6px 12px;
       border-radius: 20px;
-      font-weight: bold;
+      font-weight: 700;
+      font-size: 0.85rem;
       cursor: pointer;
-      font-size: 0.9rem;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-      transition: background 0.2s, transform 0.1s;
+      touch-action: manipulation;
+      transition: background 0.15s, transform 0.1s;
     }
 
-    .reset-btn:active {
+    .btn:active {
       transform: scale(0.96);
-      background: #eceff1;
+      background: #f1f5f9;
     }
 
-    .board-layout {
+    .btn-edit.active {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #b45309;
+    }
+
+    .board-grid {
       display: grid;
-      grid-template-columns: 1fr 6px 1fr;
-      gap: 16px;
+      grid-template-columns: 1fr 5px 1fr;
+      gap: 14px;
     }
 
     @media (max-width: 768px) {
-      .board-layout {
+      body {
+        padding: 6px;
+      }
+      .app-container {
+        border-width: 8px;
+        padding: 10px;
+      }
+      .board-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 16px;
       }
       .divider-line {
         display: none;
@@ -99,177 +127,355 @@
     }
 
     .divider-line {
-      background-color: var(--border-line);
+      background: var(--blue-divider);
       border-radius: 3px;
       width: 100%;
       height: 100%;
     }
 
-    .section-col {
+    .section-column {
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
 
-    .section-block {
+    .section-box {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .section-header {
-      background: #ffffff;
-      border: 2px solid #b0bec5;
-      border-radius: 12px;
-      padding: 6px 14px;
-      font-size: 1.05rem;
-      font-weight: bold;
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .section-tag {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      width: fit-content;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
     }
 
-    .task-grid {
+    .tag-morning {
+      border: 2px solid #fdba74;
+      color: var(--morning-color);
+    }
+
+    .tag-item {
+      border: 2px solid #7dd3fc;
+      color: var(--item-color);
+    }
+
+    .tag-afternoon {
+      border: 2px solid #86efac;
+      color: var(--afternoon-color);
+    }
+
+    .btn-add-item {
+      background: #ffffff;
+      border: 1.5px dashed #94a3b8;
+      border-radius: 14px;
+      padding: 3px 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--sub-text);
+      cursor: pointer;
+      display: none;
+    }
+
+    .edit-mode .btn-add-item {
+      display: inline-block;
+    }
+
+    .task-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    .task-row {
+    .task-item {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       cursor: pointer;
+      touch-action: manipulation;
+      position: relative;
     }
 
     .task-card {
       flex: 1;
       background: var(--card-bg);
       border: 2px solid var(--card-border);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 8px 12px;
       display: flex;
       align-items: center;
       gap: 12px;
-      box-shadow: 2px 3px 6px rgba(0,0,0,0.06);
-      transition: transform 0.15s ease, border-color 0.15s;
+      box-shadow: 1px 2px 5px rgba(0,0,0,0.05);
+      transition: border-color 0.2s, background-color 0.2s, transform 0.1s;
     }
 
-    .task-row:active .task-card {
+    .task-item:active .task-card {
       transform: scale(0.98);
     }
 
     .task-icon {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       line-height: 1;
-      width: 36px;
+      width: 32px;
       text-align: center;
     }
 
-    .task-name {
-      font-size: 1rem;
-      font-weight: bold;
-      color: #263238;
+    .task-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #334155;
       flex: 1;
     }
 
-    .stamp-spot {
-      width: 54px;
-      height: 54px;
-      border: 2px dashed #cfd8dc;
+    .btn-delete-item {
+      display: none;
+      background: var(--danger-color);
+      color: #ffffff;
+      border: none;
       border-radius: 50%;
+      width: 26px;
+      height: 26px;
+      font-weight: bold;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+
+    .edit-mode .btn-delete-item {
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,255,255,0.6);
-      position: relative;
     }
 
-    .stamp-badge {
-      width: 48px;
-      height: 48px;
+    .edit-mode .stamp-target {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .stamp-target {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: #ffb74d;
-      border: 2px solid #f57c00;
+      border: 2px dashed #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.7);
+      flex-shrink: 0;
+    }
+
+    .stamp {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--stamp-gold);
+      border: 2px solid var(--stamp-border);
       color: #ffffff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.18);
       transform: scale(0);
       opacity: 0;
-      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
+      transition: transform 0.24s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35);
     }
 
-    .stamp-badge .sun-icon {
+    .stamp-sun {
       font-size: 1.1rem;
       line-height: 1;
     }
 
-    .stamp-badge .stamp-text {
-      font-size: 0.65rem;
-      font-weight: bold;
+    .stamp-text {
+      font-size: 0.6rem;
+      font-weight: 900;
       line-height: 1;
-      margin-top: 2px;
+      margin-top: 1px;
     }
 
-    .task-row.is-done .stamp-badge {
-      transform: scale(1) rotate(-6deg);
+    .task-item.is-completed .stamp {
+      transform: scale(1) rotate(-8deg);
       opacity: 1;
     }
 
-    .task-row.is-done .task-card {
-      border-color: #81c784;
-      background: #f1f8e9;
+    .task-item.is-completed .task-card {
+      border-color: #86efac;
+      background: #f0fdf4;
+    }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-window {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 18px;
+      width: 100%;
+      max-width: 360px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .modal-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .modal-select {
+      font-size: 1.2rem;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: #ffffff;
+    }
+
+    .modal-input {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      font-size: 0.95rem;
+      outline: none;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+
+    .modal-input:focus {
+      border-color: var(--item-color);
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .banner-share {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: #64748b;
+      line-height: 1.4;
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
+  <div class="app-container" id="mainContainer">
     <div class="top-bar">
       <div class="board-title">☀️ できたよ！お支度ボード</div>
-      <button class="reset-btn" id="resetBtn">ぜんぶもどす</button>
+      <div class="control-actions">
+        <button class="btn btn-edit" id="toggleEditBtn">こうもく編集</button>
+        <button class="btn" id="resetBtn">ぜんぶもどす</button>
+      </div>
     </div>
 
-    <div class="board-layout">
-      <!-- 左列：あさにすること ＆ もちものチェック -->
-      <div class="section-col">
-        <div class="section-block">
-          <div class="section-header" style="color: #e65100;">
-            <span>☀️</span> あさにすること
+    <div class="board-grid">
+      <div class="section-column">
+        <div class="section-box">
+          <div class="section-header-row">
+            <div class="section-tag tag-morning">
+              <span>☀️</span> あさにすること
+            </div>
+            <button class="btn-add-item" data-category="morning">＋ 追加</button>
           </div>
-          <div class="task-grid" id="morningTasks"></div>
+          <div class="task-list" id="morningList"></div>
         </div>
 
-        <div class="section-block">
-          <div class="section-header" style="color: #0277bd;">
-            <span>🎒</span> もちものチェック
+        <div class="section-box">
+          <div class="section-header-row">
+            <div class="section-tag tag-item">
+              <span>🎒</span> もちものチェック
+            </div>
+            <button class="btn-add-item" data-category="items">＋ 追加</button>
           </div>
-          <div class="task-grid" id="itemTasks"></div>
+          <div class="task-list" id="itemList"></div>
         </div>
       </div>
 
-      <!-- 中央区切り線 -->
       <div class="divider-line"></div>
 
-      <!-- 右列：かえったらすること -->
-      <div class="section-col">
-        <div class="section-block">
-          <div class="section-header" style="color: #2e7d32;">
-            <span>🏠</span> かえったらすること
+      <div class="section-column">
+        <div class="section-box">
+          <div class="section-header-row">
+            <div class="section-tag tag-afternoon">
+              <span>🏠</span> かえったらすること
+            </div>
+            <button class="btn-add-item" data-category="afternoon">＋ 追加</button>
           </div>
-          <div class="task-grid" id="afternoonTasks"></div>
+          <div class="task-list" id="afternoonList"></div>
         </div>
+      </div>
+    </div>
+
+    <div class="banner-share">
+      <span>💡 各自が編集・追加した項目やチェック状態は、開いている端末内（ブラウザ）にのみ自動保存されます。他の利用者の画面には影響しません。</span>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="addModal">
+    <div class="modal-window">
+      <div class="modal-title">あたらしい項目を追加</div>
+      <div class="modal-input-row">
+        <select class="modal-select" id="itemIconSelect">
+          <option value="⭐">⭐</option>
+          <option value="📚">📚</option>
+          <option value="✏️">✏️</option>
+          <option value="🎨">🎨</option>
+          <option value="🎵">🎵</option>
+          <option value="👟">👟</option>
+          <option value="☂️">☂️</option>
+          <option value="💊">💊</option>
+          <option value="🧴">🧴</option>
+          <option value="🍎">🍎</option>
+          <option value="🔑">🔑</option>
+        </select>
+        <input type="text" class="modal-input" id="itemLabelInput" placeholder="やることを入力" maxlength="15">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="modalCancelBtn">キャンセル</button>
+        <button class="btn" style="background:#0284c7;color:#fff;border:none;" id="modalAddBtn">追加する</button>
       </div>
     </div>
   </div>
 
   <script>
-    const taskData = {
+    const DEFAULT_DATA = {
       morning: [
         { id: "m1", label: "トイレ", icon: "🚽" },
         { id: "m2", label: "あさごはん", icon: "🍞" },
@@ -295,111 +501,220 @@
       ]
     };
 
-    const STORAGE_KEY = "oshitaku_board_state";
+    const TASKS_STORAGE_KEY = "custom_oshitaku_board_items";
+    const STATE_STORAGE_KEY = "custom_oshitaku_board_state";
 
-    let state = {};
+    let currentTasks = {};
+    let completedState = {};
+    let isEditMode = false;
+    let targetCategory = null;
 
-    function loadState() {
+    function loadData() {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          state = JSON.parse(saved);
-        }
+        const storedTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+        currentTasks = storedTasks ? JSON.parse(storedTasks) : JSON.parse(JSON.stringify(DEFAULT_DATA));
       } catch (e) {
-        state = {};
+        currentTasks = JSON.parse(JSON.stringify(DEFAULT_DATA));
       }
+
+      try {
+        const storedState = localStorage.getItem(STATE_STORAGE_KEY);
+        completedState = storedState ? JSON.parse(storedState) : {};
+      } catch (e) {
+        completedState = {};
+      }
+    }
+
+    function saveTasks() {
+      try {
+        localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(currentTasks));
+      } catch (e) {}
     }
 
     function saveState() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(STATE_STORAGE_KEY, JSON.stringify(completedState));
       } catch (e) {}
     }
 
-    // Web Audio APIによる効果音
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let audioCtx = null;
+    function playTone() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const now = audioCtx.currentTime;
 
-    function playStampSound() {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(587.33, now);
+        osc.frequency.exponentialRampToValueAtTime(880.00, now + 0.08);
+        osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.16);
 
-      osc.type = "triangle";
-      const now = audioCtx.currentTime;
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
 
-      // 明るいピロリン音
-      osc.frequency.setValueAtTime(523.25, now); // C5
-      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.08); // G5
-      osc.frequency.exponentialRampToValueAtTime(1046.50, now + 0.16); // C6
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
 
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.linearRampToValueAtTime(0.2, now + 0.15);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } catch (e) {}
     }
 
-    function renderCategory(containerId, items) {
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
+    function renderTasks() {
+      const renderGroup = (containerId, categoryKey) => {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        const list = currentTasks[categoryKey] || [];
 
-      items.forEach(item => {
-        const row = document.createElement("div");
-        row.className = "task-row";
-        if (state[item.id]) {
-          row.classList.add("is-done");
-        }
-
-        row.innerHTML = `
-          <div class="task-card">
-            <div class="task-icon">${item.icon}</div>
-            <div class="task-name">${item.label}</div>
-          </div>
-          <div class="stamp-spot">
-            <div class="stamp-badge">
-              <span class="sun-icon">☀️</span>
-              <span class="stamp-text">できたよ!</span>
-            </div>
-          </div>
-        `;
-
-        const toggle = () => {
-          const nextState = !row.classList.contains("is-done");
-          if (nextState) {
-            row.classList.add("is-done");
-            playStampSound();
-          } else {
-            row.classList.remove("is-done");
+        list.forEach((item) => {
+          const row = document.createElement("div");
+          row.className = "task-item";
+          if (completedState[item.id]) {
+            row.classList.add("is-completed");
           }
-          state[item.id] = nextState;
-          saveState();
+
+          row.innerHTML = `
+            <div class="task-card">
+              <div class="task-icon">${item.icon}</div>
+              <div class="task-title">${item.label}</div>
+            </div>
+            <div class="stamp-target">
+              <div class="stamp">
+                <span class="stamp-sun">☀️</span>
+                <span class="stamp-text">できた!</span>
+              </div>
+            </div>
+            <button class="btn-delete-item" title="削除">✕</button>
+          `;
+
+          const handleToggle = (e) => {
+            if (isEditMode) return;
+            e.preventDefault();
+            const nextVal = !row.classList.contains("is-completed");
+            if (nextVal) {
+              row.classList.add("is-completed");
+              playTone();
+            } else {
+              row.classList.remove("is-completed");
+            }
+            completedState[item.id] = nextVal;
+            saveState();
+          };
+
+          const card = row.querySelector(".task-card");
+          const stampTarget = row.querySelector(".stamp-target");
+          card.addEventListener("touchend", handleToggle);
+          card.addEventListener("click", handleToggle);
+          stampTarget.addEventListener("touchend", handleToggle);
+          stampTarget.addEventListener("click", handleToggle);
+
+          const delBtn = row.querySelector(".btn-delete-item");
+          const handleDelete = (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            currentTasks[categoryKey] = currentTasks[categoryKey].filter(t => t.id !== item.id);
+            delete completedState[item.id];
+            saveTasks();
+            saveState();
+            renderTasks();
+          };
+          delBtn.addEventListener("touchend", handleDelete);
+          delBtn.addEventListener("click", handleDelete);
+
+          container.appendChild(row);
+        });
+      };
+
+      renderGroup("morningList", "morning");
+      renderGroup("itemList", "items");
+      renderGroup("afternoonList", "afternoon");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadData();
+      renderTasks();
+
+      const mainContainer = document.getElementById("mainContainer");
+      const toggleEditBtn = document.getElementById("toggleEditBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const addModal = document.getElementById("addModal");
+      const modalCancelBtn = document.getElementById("modalCancelBtn");
+      const modalAddBtn = document.getElementById("modalAddBtn");
+      const itemLabelInput = document.getElementById("itemLabelInput");
+      const itemIconSelect = document.getElementById("itemIconSelect");
+
+      const toggleEdit = (e) => {
+        e.preventDefault();
+        isEditMode = !isEditMode;
+        if (isEditMode) {
+          mainContainer.classList.add("edit-mode");
+          toggleEditBtn.classList.add("active");
+          toggleEditBtn.textContent = "編集をおわる";
+        } else {
+          mainContainer.classList.remove("edit-mode");
+          toggleEditBtn.classList.remove("active");
+          toggleEditBtn.textContent = "こうもく編集";
+        }
+      };
+      toggleEditBtn.addEventListener("touchend", toggleEdit);
+      toggleEditBtn.addEventListener("click", toggleEdit);
+
+      document.querySelectorAll(".btn-add-item").forEach(btn => {
+        const openModal = (e) => {
+          e.preventDefault();
+          targetCategory = btn.getAttribute("data-category");
+          itemLabelInput.value = "";
+          addModal.classList.add("open");
+          itemLabelInput.focus();
+        };
+        btn.addEventListener("touchend", openModal);
+        btn.addEventListener("click", openModal);
+      });
+
+      const closeModal = (e) => {
+        e.preventDefault();
+        addModal.classList.remove("open");
+      };
+      modalCancelBtn.addEventListener("touchend", closeModal);
+      modalCancelBtn.addEventListener("click", closeModal);
+
+      const addItem = (e) => {
+        e.preventDefault();
+        const label = itemLabelInput.value.trim();
+        if (!label || !targetCategory) return;
+
+        const newItem = {
+          id: "custom_" + Date.now(),
+          label: label,
+          icon: itemIconSelect.value
         };
 
-        row.addEventListener("click", toggle);
-        container.appendChild(row);
-      });
-    }
+        if (!currentTasks[targetCategory]) {
+          currentTasks[targetCategory] = [];
+        }
+        currentTasks[targetCategory].push(newItem);
+        saveTasks();
+        renderTasks();
+        addModal.classList.remove("open");
+      };
+      modalAddBtn.addEventListener("touchend", addItem);
+      modalAddBtn.addEventListener("click", addItem);
 
-    function init() {
-      loadState();
-      renderCategory("morningTasks", taskData.morning);
-      renderCategory("itemTasks", taskData.items);
-      renderCategory("afternoonTasks", taskData.afternoon);
-
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        state = {};
+      const handleReset = (e) => {
+        e.preventDefault();
+        completedState = {};
         saveState();
-        document.querySelectorAll(".task-row").forEach(el => el.classList.remove("is-done"));
-      });
-    }
-
-    window.addEventListener("DOMContentLoaded", init);
+        document.querySelectorAll(".task-item").forEach(el => el.classList.remove("is-completed"));
+      };
+      resetBtn.addEventListener("touchend", handleReset);
+      resetBtn.addEventListener("click", handleReset);
+    });
   </script>
 </body>
 </html>
